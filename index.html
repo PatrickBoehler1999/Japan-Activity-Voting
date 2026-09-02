@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Japan 2027 — Activity Vote</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1c2b3a;
+    --ink-soft:#28394d;
+    --paper:#eee7d8;
+    --paper-dim:#e3d9c3;
+    --charcoal:#2c2621;
+    --charcoal-soft:#5c5346;
+    --gold:#b8954f;
+    --hairline:rgba(184,149,79,0.35);
+    --voter:#c1272d;
+    --shadow:0 10px 30px rgba(0,0,0,0.25);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--ink);
+    background-image:
+      radial-gradient(circle at 15% 8%, rgba(255,255,255,0.04), transparent 40%),
+      radial-gradient(circle at 85% 92%, rgba(255,255,255,0.03), transparent 45%);
+    color:var(--charcoal);
+    font-family:'Zen Kaku Gothic New', sans-serif;
+    min-height:100vh;
+    padding-bottom:110px;
+  }
+  ::selection{ background:var(--gold); color:var(--ink); }
+
+  /* ---------- HEADER ---------- */
+  header{
+    padding:16px 20px 6px;
+    text-align:center;
+    color:var(--paper);
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.3em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-bottom:4px;
+  }
+  h1{
+    font-family:'Shippori Mincho', serif;
+    font-weight:800;
+    font-size:clamp(20px,5vw,26px);
+    margin:0;
+    letter-spacing:0.01em;
+  }
+  header p{ display:none; }
+
+  /* ---------- VOTER GATE ---------- */
+  .voter-gate{
+    position:fixed;
+    inset:0;
+    z-index:100;
+    background:var(--ink);
+    background-image:
+      radial-gradient(circle at 15% 8%, rgba(255,255,255,0.04), transparent 40%),
+      radial-gradient(circle at 85% 92%, rgba(255,255,255,0.03), transparent 45%);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:28px;
+  }
+  .voter-gate-inner{
+    max-width:420px;
+    width:100%;
+    text-align:center;
+  }
+  .gate-eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.35em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-bottom:16px;
+  }
+  .gate-title{
+    font-family:'Shippori Mincho', serif;
+    font-weight:800;
+    font-size:clamp(32px,8vw,44px);
+    color:var(--paper);
+    margin:0 0 10px;
+  }
+  .gate-sub{
+    font-size:14px;
+    color:rgba(238,231,216,0.6);
+    margin:0 0 32px;
+    line-height:1.6;
+  }
+  .gate-grid{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:12px;
+    margin-bottom:28px;
+  }
+  .gate-name-btn{
+    background:var(--paper);
+    border:3px solid transparent;
+    border-radius:10px;
+    padding:22px 10px;
+    font-family:'Shippori Mincho', serif;
+    font-weight:700;
+    font-size:18px;
+    color:var(--charcoal);
+    cursor:pointer;
+    transition:all 0.15s ease;
+  }
+  .gate-name-btn:hover{ transform:translateY(-2px); box-shadow:0 8px 20px rgba(0,0,0,0.3); }
+  .gate-name-btn.selected{
+    border-color:var(--chip-color, var(--gold));
+    box-shadow:0 8px 22px rgba(0,0,0,0.35);
+  }
+  .gate-confirm-btn{
+    width:100%;
+    background:var(--gold);
+    border:none;
+    border-radius:10px;
+    padding:16px 20px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--ink);
+    cursor:pointer;
+    transition:all 0.15s ease;
+  }
+  .gate-confirm-btn:disabled{
+    background:rgba(238,231,216,0.15);
+    color:rgba(238,231,216,0.4);
+    cursor:not-allowed;
+  }
+  .gate-confirm-btn:not(:disabled):hover{
+    transform:translateY(-1px);
+    box-shadow:0 8px 20px rgba(184,149,79,0.35);
+  }
+
+  /* ---------- HUB ---------- */
+  .hub-intro{
+    max-width:760px;
+    margin:0 auto;
+    padding:22px 20px 4px;
+    text-align:center;
+  }
+  .hub-overall{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.06em;
+    color:var(--gold);
+    margin-bottom:8px;
+  }
+  .hub-sub{
+    font-size:13.5px;
+    line-height:1.6;
+    color:rgba(238,231,216,0.6);
+    max-width:420px;
+    margin:0 auto;
+  }
+  .hub-grid{
+    max-width:760px;
+    margin:0 auto;
+    padding:20px 20px 40px;
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:14px;
+  }
+  .hub-card{
+    background:var(--paper);
+    border:none;
+    border-radius:8px;
+    box-shadow:var(--shadow);
+    padding:20px 16px;
+    text-align:left;
+    cursor:pointer;
+    transition:transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .hub-card:hover{ transform:translateY(-2px); box-shadow:0 14px 34px rgba(0,0,0,0.3); }
+  .hub-card-code{
+    display:inline-block;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:0.06em;
+    color:var(--gold);
+    background:rgba(184,149,79,0.14);
+    border-radius:999px;
+    padding:3px 10px;
+    margin-bottom:10px;
+  }
+  .hub-card-name{
+    font-family:'Shippori Mincho', serif;
+    font-weight:700;
+    font-size:17px;
+    color:var(--charcoal);
+    line-height:1.25;
+    margin-bottom:6px;
+  }
+  .hub-card-count{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--charcoal-soft);
+    letter-spacing:0.03em;
+  }
+  .hub-card-all{ background:var(--paper-dim); }
+
+  @media (max-width:420px){
+    .hub-grid{ grid-template-columns:1fr; }
+  }
+
+  .back-row{
+    max-width:760px;
+    margin:0 auto;
+    padding:6px 20px 0;
+  }
+  .back-btn{
+    background:none;
+    border:none;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.04em;
+    color:rgba(238,231,216,0.6);
+    cursor:pointer;
+    padding:4px 0;
+    transition:color 0.15s ease;
+  }
+  .back-btn:hover{ color:var(--paper); }
+
+  /* ---------- MAIN ---------- */
+  main{
+    max-width:760px;
+    margin:0 auto;
+    padding:10px 20px 0;
+  }
+  .progress-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:10px;
+    color:rgba(238,231,216,0.55);
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.05em;
+  }
+  .progress-track{
+    flex:1;
+    height:2px;
+    background:rgba(238,231,216,0.15);
+    margin:0 16px;
+    position:relative;
+  }
+  .progress-fill{
+    position:absolute;
+    left:0; top:0; bottom:0;
+    background:var(--gold);
+    width:0%;
+    transition:width 0.3s ease;
+  }
+
+  .hide-toggle-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-wrap:wrap;
+    row-gap:10px;
+    column-gap:10px;
+    margin:24px 0 4px;
+  }
+  .hide-toggle-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.04em;
+    color:rgba(238,231,216,0.6);
+    cursor:pointer;
+    user-select:none;
+  }
+  .switch{
+    position:relative;
+    width:38px;
+    height:21px;
+    flex-shrink:0;
+  }
+  .switch input{
+    opacity:0;
+    width:0;
+    height:0;
+  }
+  .switch-track{
+    position:absolute;
+    inset:0;
+    background:rgba(238,231,216,0.2);
+    border-radius:999px;
+    cursor:pointer;
+    transition:background 0.2s ease;
+  }
+  .switch-track::before{
+    content:'';
+    position:absolute;
+    left:2px; top:2px;
+    width:17px; height:17px;
+    background:var(--paper);
+    border-radius:50%;
+    transition:transform 0.2s ease;
+  }
+  .switch input:checked + .switch-track{ background:var(--gold); }
+  .switch input:checked + .switch-track::before{ transform:translateX(17px); }
+
+  /* ---------- QUICK SORT CARD ---------- */
+  .quick-card{
+    background:var(--paper);
+    border-radius:10px;
+    box-shadow:var(--shadow);
+    padding:32px 28px 26px;
+    margin-bottom:22px;
+    text-align:center;
+    transition:opacity 0.3s ease, transform 0.3s ease;
+  }
+  .quick-card.leaving{ opacity:0; transform:scale(0.96); }
+  .quick-eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.2em;
+    text-transform:uppercase;
+    color:var(--charcoal-soft);
+    margin-bottom:10px;
+  }
+  .quick-name{
+    font-family:'Shippori Mincho', serif;
+    font-weight:800;
+    font-size:clamp(24px,5vw,32px);
+    color:var(--charcoal);
+    line-height:1.2;
+    margin-bottom:6px;
+  }
+  .quick-tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.5px;
+    color:var(--charcoal-soft);
+    letter-spacing:0.04em;
+    margin-bottom:16px;
+  }
+  .quick-desc{
+    font-size:14.5px;
+    line-height:1.6;
+    color:var(--charcoal-soft);
+    max-width:420px;
+    margin:0 auto 24px;
+    border-top:1px dashed rgba(44,38,33,0.18);
+    border-bottom:1px dashed rgba(44,38,33,0.18);
+    padding:16px 0;
+  }
+  .quick-vote-row{
+    display:flex;
+    gap:12px;
+  }
+  .quick-vote-btn{
+    flex:1;
+    position:relative;
+    border:2px solid rgba(44,38,33,0.2);
+    background:transparent;
+    border-radius:10px;
+    padding:20px 8px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:14px;
+    font-weight:700;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--charcoal-soft);
+    cursor:pointer;
+    transition:all 0.15s ease;
+    overflow:hidden;
+  }
+  .quick-vote-btn .mark{
+    display:block;
+    font-size:22px;
+    margin-bottom:6px;
+    font-weight:900;
+  }
+  .quick-vote-btn:hover{ border-color:rgba(44,38,33,0.5); transform:translateY(-1px); }
+  .quick-vote-btn[data-val="yes"]:hover{ border-color:#2d8a56; color:#1f6b40; }
+  .quick-vote-btn[data-val="indifferent"]:hover{ border-color:#c99914; color:#93700e; }
+  .quick-vote-btn[data-val="no"]:hover{ border-color:#be372d; color:#9c2c23; }
+
+  .quick-empty{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    color:var(--charcoal-soft);
+    text-align:center;
+    padding:10px 0 2px;
+  }
+  .quick-tally{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    letter-spacing:0.02em;
+    color:var(--charcoal-soft);
+    margin-top:10px;
+  }
+  .tally-yes{ color:#1f6b40; font-weight:700; }
+  .tally-indifferent{ color:#93700e; font-weight:700; }
+  .tally-no{ color:#9c2c23; font-weight:700; }
+  .quick-badge{
+    font-family:'Shippori Mincho', serif;
+    font-weight:800;
+    font-size:22px;
+    color:var(--gold);
+    background:rgba(184,149,79,0.12);
+    border-radius:8px;
+    padding:10px 14px;
+    margin-top:6px;
+  }
+  .quick-stat-line{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--charcoal-soft);
+    margin-top:10px;
+  }
+  .quick-next{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--charcoal-soft);
+    margin-top:14px;
+  }
+  .quick-next strong{ color:var(--charcoal); }
+  .quick-undo{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    margin-top:16px;
+    background:none;
+    border:none;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.5px;
+    letter-spacing:0.04em;
+    color:var(--charcoal-soft);
+    cursor:pointer;
+    padding:6px 4px;
+    transition:color 0.15s ease;
+  }
+  .quick-undo:hover{ color:var(--charcoal); }
+  .quick-undo:disabled{ opacity:0.35; cursor:not-allowed; }
+
+  .quick-bulk-row{
+    display:flex;
+    justify-content:center;
+    gap:14px;
+    margin-top:16px;
+  }
+  .quick-bulk-btn{
+    background:none;
+    border:1px dashed rgba(44,38,33,0.35);
+    border-radius:6px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.03em;
+    color:var(--charcoal-soft);
+    padding:8px 14px;
+    cursor:pointer;
+    transition:all 0.15s ease;
+  }
+  .quick-bulk-btn:hover{ border-color:#93700e; color:#93700e; }
+
+  .quick-continue-btn{
+    background:var(--gold);
+    border:none;
+    border-radius:8px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    font-weight:700;
+    letter-spacing:0.04em;
+    color:var(--ink);
+    padding:12px 22px;
+    cursor:pointer;
+    transition:transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .quick-continue-btn:hover{ transform:translateY(-1px); box-shadow:0 8px 20px rgba(184,149,79,0.35); }
+  .quick-progress{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:rgba(44,38,33,0.5);
+    margin-bottom:4px;
+  }
+
+  /* ---------- TICKET CARD ---------- */
+  .ticket{
+    background:var(--paper);
+    border-radius:6px;
+    box-shadow:var(--shadow);
+    margin-bottom:18px;
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    align-items:stretch;
+    transition:opacity 0.35s ease, transform 0.35s ease;
+  }
+  .ticket.leaving{
+    opacity:0;
+    transform:scale(0.96) translateY(-4px);
+    pointer-events:none;
+  }
+  .ticket::before{
+    content:'';
+    position:absolute;
+    left:96px;
+    top:0; bottom:0;
+    width:0;
+    border-left:2px dashed rgba(44,38,33,0.22);
+  }
+  .ticket-stub{
+    width:96px;
+    flex-shrink:0;
+    background:var(--paper-dim);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:14px 6px;
+    text-align:center;
+  }
+  .stub-code{
+    font-family:'JetBrains Mono', monospace;
+    font-weight:600;
+    font-size:20px;
+    letter-spacing:0.05em;
+    color:var(--charcoal);
+  }
+  .stub-city{
+    font-family:'JetBrains Mono', monospace;
+    font-size:9px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--charcoal-soft);
+    margin-top:4px;
+  }
+  .ticket-body{
+    flex:1;
+    padding:18px 20px 16px 24px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    min-width:0;
+  }
+  .ticket-name{
+    font-family:'Shippori Mincho', serif;
+    font-weight:700;
+    font-size:20px;
+    color:var(--charcoal);
+    line-height:1.25;
+  }
+  .ticket-tag{
+    font-size:11px;
+    color:var(--charcoal-soft);
+    font-family:'JetBrains Mono', monospace;
+    letter-spacing:0.03em;
+  }
+
+  .ticket-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:10px;
+    cursor:pointer;
+  }
+  .ticket-chevron{
+    flex-shrink:0;
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    color:var(--charcoal-soft);
+    transform:rotate(0deg);
+    transition:transform 0.2s ease;
+    margin-top:3px;
+  }
+  .ticket.expanded .ticket-chevron{ transform:rotate(180deg); }
+
+  .ticket-desc{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height 0.25s ease;
+  }
+  .ticket.expanded .ticket-desc{ max-height:120px; }
+  .ticket-desc-inner{
+    font-size:13px;
+    line-height:1.55;
+    color:var(--charcoal-soft);
+    padding-top:2px;
+    border-top:1px dashed rgba(44,38,33,0.18);
+    margin-top:2px;
+    padding-top:10px;
+  }
+
+  .vote-row{
+    display:flex;
+    gap:8px;
+    margin-top:2px;
+  }
+  .vote-btn{
+    flex:1;
+    position:relative;
+    border:1.5px solid rgba(44,38,33,0.2);
+    background:transparent;
+    border-radius:4px;
+    padding:9px 6px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--charcoal-soft);
+    cursor:pointer;
+    transition:all 0.15s ease;
+    overflow:hidden;
+  }
+  .vote-btn:hover{ border-color:rgba(44,38,33,0.45); }
+  .vote-btn .mark{
+    display:inline-block;
+    margin-right:6px;
+    font-weight:900;
+  }
+  .vote-btn[data-val="yes"].active{
+    background:rgba(45,138,86,0.14);
+    border-color:#2d8a56;
+    color:#1f6b40;
+  }
+  .vote-btn[data-val="indifferent"].active{
+    background:rgba(201,153,20,0.16);
+    border-color:#c99914;
+    color:#93700e;
+  }
+  .vote-btn[data-val="no"].active{
+    background:rgba(190,55,45,0.13);
+    border-color:#be372d;
+    color:#9c2c23;
+  }
+
+  /* hanko stamp pop */
+  .stamp-pop{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    pointer-events:none;
+  }
+  .stamp-pop::after{
+    content:'';
+    width:26px; height:26px;
+    border:2px solid currentColor;
+    border-radius:3px;
+    opacity:0;
+    transform:scale(1.8) rotate(-14deg);
+  }
+  .vote-btn.just-stamped .stamp-pop::after{
+    animation:stamp 0.32s ease-out forwards;
+  }
+  @keyframes stamp{
+    0%{ opacity:0; transform:scale(1.9) rotate(-14deg); }
+    55%{ opacity:0.9; transform:scale(0.85) rotate(-14deg); }
+    100%{ opacity:0; transform:scale(0.7) rotate(-14deg); }
+  }
+
+  /* ---------- FOOTER BAR ---------- */
+  .export-bar{
+    position:fixed;
+    left:0; right:0; bottom:0;
+    background:var(--ink);
+    border-top:1px solid rgba(238,231,216,0.15);
+    padding:14px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:16px;
+    z-index:30;
+  }
+  .export-status{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:rgba(238,231,216,0.6);
+  }
+  .export-btn{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    padding:11px 22px;
+    border-radius:999px;
+    border:none;
+    background:var(--gold);
+    color:var(--ink);
+    cursor:pointer;
+    transition:transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .export-btn:hover{ transform:translateY(-1px); box-shadow:0 6px 16px rgba(184,149,79,0.35); }
+  .export-btn:disabled{ opacity:0.4; cursor:not-allowed; transform:none; box-shadow:none; }
+
+  @media (max-width:480px){
+    .ticket-stub{ width:76px; }
+    .stub-code{ font-size:17px; }
+    .ticket::before{ left:76px; }
+    .ticket-body{ padding:16px 14px 14px 18px; }
+    .ticket-name{ font-size:17px; }
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .stamp-pop::after{ animation:none !important; opacity:0; }
+    *{ transition:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="voter-gate" id="voterGate">
+  <div class="voter-gate-inner">
+    <div class="gate-eyebrow">JAPAN · JAN 2027</div>
+    <h1 class="gate-title">Who are you?</h1>
+    <p class="gate-sub">Select your name, then confirm to start voting.</p>
+    <div class="gate-grid" id="gateGrid"></div>
+    <button class="gate-confirm-btn" id="gateConfirmBtn" disabled>Confirm & Start Voting</button>
+  </div>
+</div>
+
+<header>
+  <div class="eyebrow">JAPAN · JAN 2027</div>
+  <h1>Cast Your Votes</h1>
+</header>
+
+<div id="hubSection"></div>
+
+<div id="browseSection" style="display:none;">
+  <div class="back-row"><button class="back-btn" id="backToHubBtn">← All categories</button></div>
+
+  <main>
+    <div class="progress-row">
+      <span id="progressLabel">0 / 20 stamped</span>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <span id="voterLabel">select a name</span>
+    </div>
+
+    <div id="quickCard"></div>
+    <div id="ticketList"></div>
+
+    <div class="hide-toggle-row">
+      <label class="hide-toggle-label" for="quickModeInput">Quick sort mode</label>
+      <label class="switch">
+        <input type="checkbox" id="quickModeInput">
+        <span class="switch-track"></span>
+      </label>
+      <label class="hide-toggle-label" for="shuffleInput">Shuffle order</label>
+      <label class="switch">
+        <input type="checkbox" id="shuffleInput">
+        <span class="switch-track"></span>
+      </label>
+      <label class="hide-toggle-label" for="hideVotedInput">Hide already voted</label>
+      <label class="switch">
+        <input type="checkbox" id="hideVotedInput">
+        <span class="switch-track"></span>
+      </label>
+    </div>
+  </main>
+</div>
+
+<div class="export-bar">
+  <span class="export-status" id="exportStatus">Select your name to begin</span>
+  <button class="export-btn" id="exportBtn" disabled>Export My Votes</button>
+</div>
+
+<script>
+  const crew = [
+    { id:'patrick', name:'Patrick', color:'#c41e3a' },
+    { id:'jake',    name:'Jake',    color:'#3730a3' },
+    { id:'steve',   name:'Steve',   color:'#b45309' },
+    { id:'conner',  name:'Conner',  color:'#2d6a4f' },
+    { id:'boros',   name:'Boros',   color:'#0e7490' },
+    { id:'silva',   name:'Silva',   color:'#7c2d8e' },
+  ];
+
+  const cityCode = { tokyo:'TYO', kyoto:'KYO', osaka:'OSA', other:'JPN' };
+
+  const activities = [
+      { slug:'the-tokyo-matrix', name:"The Tokyo Matrix", city:'tokyo', type:'Activities', desc:"Multi-floor physical escape room complex inside the new Kabukicho Tower. Features some of Tokyo's most technically impressive room designs. Full English support available for select rooms." },
+      { slug:'wiggle-wiggle', name:"Wiggle Wiggle", city:'tokyo', type:'Shopping', desc:"Korean character goods and lifestyle brand with a Tokyo flagship. Think pastel stationery, plushes, mugs, bags and home accessories built around their original characters. Very Harajuku in aesthetic." },
+      { slug:'golden-gai', name:"Golden Gai", city:'tokyo', type:'Nightlife', desc:"A labyrinth of roughly 200 tiny bars packed into six narrow alleyways in Shinjuku. Most fit 6–8 people max, each with its own theme and regular crowd. Cover charge ¥500–1,000 is normal. One of Tokyo's most iconic night experiences." },
+      { slug:'eorzea-cafe-akihabara', name:"Eorzea Cafe (Akihabara)", city:'tokyo', type:'Cafes & Bakeries', desc:"Official Final Fantasy XIV cafe run by Square Enix. FFXIV-themed food and drinks, character merchandise, themed interiors. 90-minute timed seating. Reservation required and fills up months out." },
+      { slug:'ghibli-museum', name:"Ghibli Museum", city:'tokyo', type:'Sightseeing', desc:"Designed by Hayao Miyazaki himself, this intimate museum celebrates the art of animation. Exclusive short films, original cel displays, life-size Catbus, rooftop Robot Soldier. No photography inside. One of the most beloved experiences in all of Japan." },
+      { slug:'tokyo-mystery-circus', name:"Tokyo Mystery Circus", city:'tokyo', type:'Activities', desc:"The world's largest escape room complex. Multiple floors of rooms ranging from beginner to expert. Strong English support. Located in Shinjuku's entertainment district." },
+      { slug:'karaoke-kan-shibuya', name:"Karaoke Kan", city:'tokyo', type:'Activities', desc:"Multi-floor karaoke chain with private rooms for groups. Famous as the actual filming location for Lost in Translation. Excellent English song library. Open until 5am." },
+      { slug:'kirby-cafe', name:"Kirby Cafe", city:'tokyo', type:'Cafes & Bakeries', desc:"Permanent Nintendo-licensed cafe dedicated entirely to Kirby. Themed food, exclusive merchandise, illustrated walls throughout. Located inside Tokyo Skytree Town." },
+      { slug:'yokohama', name:"Yokohama", city:'tokyo', type:'Day Trips', desc:"Japan's second-largest city, 30 min from Shibuya by train. Known for its waterfront, Japan's largest Chinatown, the Cup Noodles Museum, and Sankeien Garden. Much less crowded than Tokyo." },
+      { slug:'kusatsu-onsen', name:"Kusatsu Onsen", city:'tokyo', type:'Day Trips', desc:"One of Japan's top hot spring resorts, high in the Gunma mountains. Famous for Yubatake — a steaming wooden hot spring field at the town center. Outdoor baths, ryokan inns, sulfurous mountain air. About 3.5 hrs from Tokyo by limited express." },
+      { slug:'mount-fuji-kawaguchiko', name:"Mount Fuji (Kawaguchiko)", city:'tokyo', type:'Day Trips', desc:"Fuji viewed from Lake Kawaguchiko — one of Japan's most photographed scenes. January means snow-capped peak and crystal air. Chureito Pagoda (400 steps) provides the classic framed shot. Ropeway for elevated views." },
+      { slug:'nakasendo-magome', name:"Nakasendo — Magome Post Town", city:'tokyo', type:'Nature', desc:"One of the best-preserved Edo-period post towns on the ancient Nakasendo highway. Stone-paved lanes, traditional machiya buildings, water wheels, and almost no English signage — genuinely historic. Can be walked between Magome and Tsumago (8km, ~3hrs)." },
+      { slug:'tokyo-skytree', name:"Tokyo Skytree", city:'tokyo', type:'Sightseeing', desc:"At 634 meters, the world's tallest tower. Two observation decks. January air is the clearest of the year — Fuji often visible. Tokyo Solamachi at the base has Kirby Cafe and great food." },
+      { slug:'sensoji-temple', name:"Sensoji Temple", city:'tokyo', type:'Temples & Shrines', desc:"Tokyo's oldest and most visited temple, founded in 645 AD. The Thunder Gate (Kaminarimon) leads to Nakamise-dori — a 200-meter covered shopping street with traditional snacks and crafts. Free entry." },
+      { slug:'tower-records-shibuya', name:"Tower Records Shibuya", city:'tokyo', type:'Shopping', desc:"Eight-floor flagship of Japan's Tower Records. Legendary selection of Japanese music: city-pop, J-pop, indie, electronic, jazz. Floor 4 has an unmatched vinyl section with rare Japanese pressings." },
+      { slug:'gamepanic-akihabara', name:"GamePanic Akihabara", city:'tokyo', type:'Activities', desc:"Large multi-floor modern arcade in the heart of Akihabara. Strong selection of rhythm games (beatmania IIDX, Sound Voltex, maimai), crane games, and fighting games. More modern than Super Potato but great for actually playing." },
+      { slug:'chureito-pagoda', name:"Chureito Pagoda", city:'tokyo', type:'Temples & Shrines', desc:"The iconic five-story pagoda framing Mount Fuji — one of the most reproduced images of Japan. Reached via 400 stone steps. In January the pagoda is backed by snow-capped Fuji with clear blue sky." },
+      { slug:'tako-no-tetsu', name:"Tako no Tetsu", city:'tokyo', type:'Street Food & Markets', desc:"Takoyaki specialty chain popular in Tokyo. Makes their takoyaki fresh to order — crispy outside, molten inside, topped with bonito flakes and okonomiyaki sauce." },
+      { slug:'ikebukuro-arcades', name:"Ikebukuro Arcades", city:'tokyo', type:'Activities', desc:"Ikebukuro has a dense cluster of arcades including Namco Ikebukuro and multiple Taito Stations. Less crowded than Akihabara, with a strong local gamer crowd." },
+      { slug:'tsukiji-market', name:"Tsukiji Outer Market", city:'tokyo', type:'Street Food & Markets', desc:"The legendary outer market. Stalls sell fresh uni, oysters, tuna sashimi on rice, tamagoyaki, and street snacks. Best food crawl in Tokyo. Go before 9am for freshest cuts." },
+      { slug:'tacos-3hermanos', name:"Tacos 3Hermanos", city:'tokyo', type:'International & Casual', desc:"Authentic Mexican taqueria run by three brothers in Shinjuku. Known for proper corn tortillas, slow-braised meats, and house-made salsas. A cult favorite among Tokyo's expat community." },
+      { slug:'character-street-tokyo-station', name:"Character Street (Tokyo Station)", city:'tokyo', type:'Shopping', desc:"Underground shopping street housing official flagship stores for Pokemon, Ghibli, Sanrio, Rilakkuma, and Jump (One Piece, Dragon Ball). Many products are Tokyo Station exclusives." },
+      { slug:'shimokitazawa-thrifting', name:"Shimokitazawa Thrift & Records", city:'tokyo', type:'Shopping', desc:"Tokyo's most beloved bohemian neighborhood — dense with secondhand clothing stores, vintage record shops, indie cafes, and tiny live music venues. Disk Union has a multi-floor store here." },
+      { slug:'gyukatsu-motomura', name:"Gyukatsu Motomura", city:'tokyo', type:'Noodles & Comfort Food', desc:"The definitive gyukatsu restaurant — beef cutlet served rare then grilled at your table on a small hot stone. The crust is crackling, the inside stays pink. Consistently one of Tokyo's most queued restaurants." },
+      { slug:'snoopy-museum', name:"Snoopy Museum", city:'tokyo', type:'Sightseeing', desc:"The only permanent Snoopy Museum outside of California. Houses original Charles M. Schulz illustrations, immersive Peanuts-themed installations, a Snoopy cafe and shop." },
+      { slug:'glitch-coffee', name:"Glitch Coffee & Roasters", city:'tokyo', type:'Cafes & Bakeries', desc:"One of Tokyo's most acclaimed specialty coffee roasters. Slow-bar single-origin pourover and espresso, sourced and roasted in-house. Consistently on Asia's best coffee lists." },
+      { slug:'silver-ball-planet', name:"Silver Ball Planet", city:'osaka', type:'Activities', desc:"The best pinball arcade in Japan — 100+ machines spanning 1970s electromechanical tables through modern Stern and Jersey Jack titles. Free entry, ¥100 per game. Maintained in exceptional condition." },
+      { slug:'dragon-quest-island', name:"Dragon Quest Island (Nijigen no Mori)", city:'osaka', type:'Day Trips', desc:"Outdoor adventure theme park on Awaji Island with a massive Dragon Quest dark ride, archery, rope courses, and a Naruto/Boruto attraction. Features a giant Slime and monster encounter system." },
+      { slug:'kobe', name:"Kobe", city:'osaka', type:'Day Trips', desc:"Sophisticated port city 30 min from Osaka. Famous for Kobe beef, the Kitano foreigners' district of Victorian-era houses, Meriken Park waterfront, and a cosmopolitan atmosphere." },
+      { slug:'dotonbori-street', name:"Dotonbori", city:'osaka', type:'Street Food & Markets', desc:"Osaka's most famous entertainment and food strip. The glowing Glico Running Man sign, the giant crab, takoyaki stalls, okonomiyaki restaurants, and the Tombori Riverwalk. Everything is bigger and more neon than it needs to be." },
+      { slug:'eorzea-cafe-dotonbori', name:"Eorzea Cafe (Dotonbori)", city:'osaka', type:'Cafes & Bakeries', desc:"The Osaka branch of the official FFXIV cafe. Same timed-seating format as Akihabara: themed dishes, elaborate drinks, exclusive merch, and decor that feels like stepping into Eorzea." },
+      { slug:'the-munch', name:"The Munch", city:'osaka', type:'Cafes & Bakeries', desc:"Acclaimed Osaka specialty coffee shop known for barrel-aged and experimental brewing methods. One of the most talked-about independent cafes in the Kansai region." },
+      { slug:'izakaya-toyo', name:"Izakaya Toyo", city:'osaka', type:'Izakaya, Grills & Sushi', desc:"Famous from Netflix Street Food Asia. Master chef Toyo-san grills food tableside using a blowtorch, improvising dishes based on what's fresh that day. No menu, no reservations — Toyo decides what you eat. One of the most unique dining experiences in Japan." },
+      { slug:'nishiki-market', name:"Nishiki Market", city:'kyoto', type:'Street Food & Markets', desc:"A 400-meter covered shopping street known as Kyoto's Kitchen — 100+ vendors selling pickled vegetables, fresh tofu, grilled skewers, matcha sweets, and specialty ingredients. Running since the Heian period." },
+      { slug:'pontocho-alley', name:"Pontocho Alley", city:'kyoto', type:'Nightlife', desc:"Narrow, lantern-lit alley alongside the Kamogawa River — one of Kyoto's most atmospheric dining streets. Traditional restaurants, sake bars, and cocktail spots in preserved townhouses." },
+      { slug:'kinkaku-ji', name:"Kinkaku-ji (Golden Pavilion)", city:'kyoto', type:'Temples & Shrines', desc:"A three-story Zen Buddhist temple covered in gold leaf, reflected in Kyokochi Pond. Originally built as a shogun's retirement villa in 1397. One of Japan's most iconic images." },
+      { slug:'ryoan-ji', name:"Ryoan-ji", city:'kyoto', type:'Temples & Shrines', desc:"Home to Japan's most famous rock garden — 15 carefully raked stones whose exact arrangement has never been officially explained. A UNESCO World Heritage Site." },
+      { slug:'shinsen-en-water-garden', name:"Shinsen-en Water Garden", city:'kyoto', type:'Temples & Shrines', desc:"A free, almost entirely overlooked garden hidden behind Nijo Castle — the last remnant of an imperial garden from the 9th century. A small vermilion bridge crosses a sacred carp pond. Completely peaceful." },
+      { slug:'nijo-castle', name:"Nijo Castle", city:'kyoto', type:'Temples & Shrines', desc:"The Kyoto residence of the Tokugawa shoguns. Famous for nightingale floors — corridors engineered to squeak when walked on to alert against assassins. Spectacular Ninomaru Palace interiors." },
+      { slug:'fushimi-inari', name:"Fushimi Inari", city:'kyoto', type:'Temples & Shrines', desc:"Thousands of vermilion torii gates winding up the sacred Mount Inari. The lower section is crowded; the upper trails become quiet forest. Full summit hike is 4km round-trip. Free entry." },
+      { slug:'fushimi-sake-district', name:"Fushimi Sake District", city:'kyoto', type:'Restaurants', desc:"Fushimi has been producing sake for over 400 years. Walk the historic kura district with weeping willows along stone-walled canals. Multiple breweries offer tastings." },
+      { slug:'arashiyama-bamboo-forest', name:"Arashiyama Bamboo Forest", city:'kyoto', type:'Nature', desc:"A short but extraordinary path through towering groves of moso bamboo. The stalks filter light into an almost supernatural glow. One of Japan's most photographed natural features. Free and open 24 hours." },
+      { slug:'tenryu-ji', name:"Tenryu-ji", city:'kyoto', type:'Temples & Shrines', desc:"A UNESCO World Heritage Zen temple with one of Japan's most celebrated garden landscapes. The garden borrows the Arashiyama mountains as a backdrop — a technique called shakkei." },
+      { slug:'otagi-nenbutsu-ji', name:"Otagi Nenbutsu-ji", city:'kyoto', type:'Temples & Shrines', desc:"A small, deeply atmospheric temple with 1,200 unique stone rakan statues, each carved individually by volunteers between 1981 and 1991. No two are alike. One of Kyoto's most memorable off-the-beaten-path sites." },
+      { slug:'higashiyama-district', name:"Higashiyama District", city:'kyoto', type:'Nature', desc:"Kyoto's most preserved historic district. Stone-paved lanes of Ninenzaka and Sannenzaka wind through traditional shops, matcha cafes, and craft stores. Leads from Kiyomizudera down through Yasaka Pagoda to Gion." },
+      { slug:'yasaka-pagoda', name:"Yasaka Pagoda", city:'kyoto', type:'Temples & Shrines', desc:"A 46-meter five-story pagoda dating to 592 AD — the last remaining structure of the ancient Hokanji temple. One of Kyoto's most iconic silhouettes, particularly striking at dusk." },
+      { slug:'kiyomizudera-temple', name:"Kiyomizudera", city:'kyoto', type:'Temples & Shrines', desc:"One of Japan's most celebrated temples, founded in 780 AD and rebuilt in 1633 without a single nail. The main hall extends over a hillside on a vast wooden stage with commanding views over Kyoto." },
+      { slug:'super-potato', name:"Super Potato", city:'tokyo', type:'Activities', desc:"Five floors of retro gaming inside a Akihabara building — Famicom, Super Famicom, PC Engine, Mega Drive, arcade boards, handhelds, and accessories going back to the 70s. Glass cases full of graded cartridges. The neon signs and low ceilings make it feel genuinely nostalgic. Patrick and Jake will lose track of time here." },
+      { slug:'mandarake-akihabara', name:"Mandarake Complex", city:'tokyo', type:'Shopping', desc:"Eight floors dedicated to second-hand manga, anime figures, doujinshi, cosplay, and vintage merch. Serious collectors treat this as a pilgrimage. The figure selection alone justifies the trip — pre-owned items at a fraction of retail, some rare and discontinued. Patrick and Jake's primary collecting destination in Akihabara." },
+      { slug:'akihabara-shopping-silva', name:"Akihabara Shopping", city:'tokyo', type:'Shopping', desc:"A free-roam shopping block through Akihabara's dense cluster of anime, manga, and gaming stores — Mandarake, Animate, Super Potato, Yodobashi, and dozens of smaller figure and card shops along the main strip and side streets. Less a single destination than a few hours of wandering and seeing what turns up. One Piece, Dragon Quest, and general figure-collecting territory — exactly Silva's pace for the day." },
+      { slug:'omoide-yokocho', name:"Omoide Yokocho", city:'tokyo', type:'Nightlife', desc:"Tiny, smoke-filled alleyway tucked behind Shinjuku Station West Exit — one of the few surviving post-war black market lanes. Narrow enough that the plastic stools of opposite restaurants nearly touch. Yakitori grills, cold Sapporo, salarymen and tourists shoulder to shoulder. The grease and smoke are part of the experience. Perfect before or after Golden Gai." },
+      { slug:'disk-union-shinjuku', name:"Disk Union Shinjuku", city:'tokyo', type:'Shopping', desc:"The flagship location of Japan's best independent record chain. Multiple floors split by genre — jazz, city-pop, rock, electronic, Japanese indie. Unmatched for rare domestic pressings and OBI-strip editions that only exist in Japan. If Patrick isn't maxing out his vinyl budget here, he's showing restraint." },
+      { slug:'kabukicho-bar-hop', name:"Kabukicho Bar Hop", city:'tokyo', type:'Nightlife', desc:"Tokyo's most concentrated nightlife district — the area around the Kabukicho Tower is packed with multi-floor bar buildings, karaoke complexes, and clubs running until dawn. Steve and Boros can break off here after the group wraps for the night and find something open at any hour. Robot Restaurant is nearby if they want spectacle." },
+      { slug:'jazz-bar-shinjuku', name:"Jazz Bar DUG", city:'tokyo', type:'Nightlife', desc:"One of Tokyo's oldest surviving jazz bars, open since 1964. Dark, intimate, and serious about the music — vinyl records played on real equipment, whisky selection carefully curated. Exactly the kind of quiet, authentic Tokyo experience Conner is here for. Closes relatively early compared to nightlife bars but perfect for an evening wind-down." },
+      { slug:'ameya-yokocho', name:"Ameya-Yokocho Market", city:'tokyo', type:'Street Food & Markets', desc:"A dense 500-meter covered market running under the JR tracks between Ueno and Okachimachi stations. Hundreds of stalls selling dried seafood, nuts, street food, cheap clothing, and trinkets. Loud, busy, and great vlogging material. The atmosphere is chaotic in the best way — Jake will have the camera out constantly." },
+      { slug:'shin-okubo-koreatown', name:"Shin-Okubo Korea Town", city:'tokyo', type:'Restaurants', desc:"Tokyo's Korea Town — one stop from Shinjuku on the Yamanote Line. Dense with Korean BBQ, fried chicken, tteokbokki street stalls, K-pop merchandise shops, and bubble tea. Good midday food crawl energy and close enough to Shinjuku to fold into almost any day. Wiggle Wiggle also has a presence here." },
+      { slug:'kyoto-jazz-bar', name:"Bar Isn\\", city:'kyoto', type:'Nightlife', desc:"One of Kyoto's most beloved jazz bars, tucked into the Nakagyo district near the bar streets. The music is taken seriously — proper bebop and hard bop on vinyl, knowledgeable staff, and a whisky list that Conner will appreciate. Small, intimate, and far from touristy. Exactly the kind of discovery that makes a trip memorable." },
+      { slug:'philosopher-path', name:"Philosopher's Path", city:'kyoto', type:'Nature', desc:"A 2km stone path running alongside a cherry-tree-lined canal between Nanzenji and Ginkakuji temples. Named after philosopher Nishida Kitaro who reportedly walked it daily. In January the bare trees have a stark, quiet beauty and the path is almost empty compared to spring. Connects several minor temples worth ducking into." },
+      { slug:'gion-at-night', name:"Gion at Night", city:'kyoto', type:'Nature', desc:"Kyoto's famous geisha district is completely transformed after dark. The stone-lantern-lit streets of Hanamikoji and Shinbashi-dori are quieter than daytime, the ochaya (teahouses) glow amber, and the occasional maiko in full dress moves quickly between appointments. The most atmospheric evening walk in Japan. Free to wander." },
+      { slug:'wife-and-husband-coffee', name:"Wife & Husband Coffee", city:'kyoto', type:'Cafes & Bakeries', desc:"A tiny, deeply charming specialty coffee shop in northern Kyoto run by a married couple. Hand-drip pourover from a focused selection of origins, served in a converted house with mismatched vintage furniture and a garden. One of the most photographed cafes in Kyoto for good reason. Worth the short trip north." },
+      { slug:'kuromon-market', name:"Kuromon Ichiba Market", city:'osaka', type:'Street Food & Markets', desc:"Osaka's premier fresh food market, nicknamed \"Osaka's Kitchen.\" 180+ stalls selling fresh seafood, wagyu skewers, whole king crab, sea urchin, and Osaka street food classics. Walk and eat — every vendor is set up for it. Jake will have a field day here, Conner will be in his element, and even Steve will find something to eat." },
+      { slug:'amerikamura', name:"Amerika-Mura", city:'osaka', type:'Shopping', desc:"Osaka's version of Harajuku — a dense grid of vintage clothing shops, streetwear, record stores, and small cafes around Triangle Park. More approachable and less crowded than Tokyo's equivalent. Great for thrifting, people-watching, and finding Osaka-specific streetwear. Good afternoon activity before Dotonbori." },
+      { slug:'whiskyholic-osaka', name:"Whiskyholic", city:'osaka', type:'Nightlife', desc:"A serious whisky bar in the Namba area with an extensive Japanese whisky list — Nikka, Suntory, Yamazaki, Hakushu, plus rarer single cask expressions. The kind of bar Conner comes to Japan specifically to find. Relaxed atmosphere, knowledgeable staff, no pressure. A civilised alternative to the louder Dotonbori scene." },
+      { slug:'namba-nightlife', name:"Namba & Shinsaibashi Nightlife", city:'osaka', type:'Nightlife', desc:"Osaka's nightlife is concentrated in and around Namba and Shinsaibashi. Dense with bars, clubs, izakayas, and late-night ramen spots — all within walking distance of the Airbnb. Steve and Boros can operate freely here every night in Osaka without needing transit. The energy runs later than Tokyo and the people are friendlier." },
+      { slug:'kyoto-samurai-ninja-museum', name:"Samurai & Ninja Museum Kyoto", city:'kyoto', type:'Activities', desc:"Interactive museum where you can wear samurai armour, handle real katana, and take a guided tour through the history of the samurai class. Ninja shuriken throwing and costume experiences available. Legitimately fun and informative — not as cheesy as it sounds. Great group activity on the flex day." },
+      { slug:'kyoto-ramen-alley', name:"Kyoto Ramen Koji", city:'kyoto', type:'Noodles & Comfort Food', desc:"Eight ramen shops on the 10th floor of Kyoto Station Tower, each representing a different regional style — Kyoto-style chicken broth, Sapporo miso, Hakata tonkotsu. Perfect first meal in Kyoto after arriving from Tokyo on the Shinkansen. Convenient, high quality, and covers every preference including Steve's picky palate." },
+      { slug:'kyoto-craft-beer', name:"Bungalow Kyoto", city:'kyoto', type:'Nightlife', desc:"One of Kyoto's best craft beer bars — rotating taps of Japanese and international craft beers in a relaxed, modern space. More approachable than the jazz bars for the whole group. Good for an early evening wind-down that works for everyone from Steve to Conner. Often has a solid snack menu too." },
+      { slug:'nishiki-tenmangu', name:"Nishiki Tenmangu Shrine", city:'kyoto', type:'Temples & Shrines', desc:"A small Shinto shrine hidden at the end of Nishiki Market, dedicated to the god of learning. Tiny but atmospheric — red lanterns, stone foxes, incense smoke mixing with the market smells behind you. One of those finds that makes a trip feel real. Free entry, five minutes from the market stalls." },
+      { slug:'kyoto-matcha-experience', name:"Ippodo Tea Kyoto", city:'kyoto', type:'Cafes & Bakeries', desc:"Ippodo is one of Japan's most respected tea merchants, founded in 1717. Their Kyoto cafe serves proper matcha — whisked at the counter, served with a seasonal wagashi sweet. The difference between this and tourist matcha ice cream is enormous. Conner will appreciate the craft; everyone else will appreciate how good real matcha actually tastes." },
+      { slug:'osaka-castle', name:"Osaka Castle", city:'osaka', type:'Temples & Shrines', desc:"One of Japan's most iconic landmarks — a five-story castle keep rebuilt in 1931 on the original 1583 foundations, surrounded by enormous stone walls and a moat. The museum inside covers the rise of Toyotomi Hideyoshi and the battles that shaped modern Japan. January means bare trees and crisp air with almost no queues. The grounds are free; the keep is ¥600." },
+      { slug:'den-den-town', name:"Den Den Town", city:'osaka', type:'Activities', desc:"Osaka's version of Akihabara — a multi-block stretch of electronics shops, retro game stores, anime merchandise, and maid cafes. Smaller and less overwhelming than Akihabara but has its own unique finds including Osaka-exclusive merchandise and a slightly grittier character. Patrick and Jake will want dedicated time here." },
+      { slug:'spa-world-osaka', name:"Spa World", city:'osaka', type:'Activities', desc:"Enormous multi-floor onsen complex in Shinsekai with themed bath areas from around the world — Roman baths, Finnish sauna, Turkish hammam, Japanese rotenburo. Open 24 hours. Steve and Boros can treat this as a late-night wind-down after bars; the rest of the group can use it as a mid-afternoon recovery. ¥1,500 entry." },
+      { slug:'shinsekai-osaka', name:"Shinsekai", city:'osaka', type:'Restaurants', desc:"One of Osaka's most distinctive old-town districts, built in 1912 modelled on Paris and New York. Narrow streets packed with kushikatsu restaurants, old-school pachinko parlours, and vintage signage surrounding the Tsutenkaku Tower. The antidote to the tourist gloss of Dotonbori — this is Osaka the way it actually was. Kushikatsu (deep-fried skewers) originated here." },
+      { slug:'tsutenkaku-tower', name:"Tsutenkaku Tower", city:'osaka', type:'Sightseeing', desc:"The retro symbol of Osaka — a 103m tower in the Shinsekai district, originally built in 1912 and rebuilt in 1956. Less famous than Tokyo Skytree but far more characterful. The observation deck has unobstructed views of southern Osaka and the Shinsekai streets below. A good photo stop before dinner in the neighbourhood." },
+      { slug:'boros-karaoke-osaka', name:"Joysound Osaka Namba", city:'osaka', type:'Activities', desc:"Large karaoke chain in the heart of Namba with private rooms for groups, an extensive English-language song library, and all-you-can-drink options. Boros's kind of night — easy, social, loud. A natural group activity for the Osaka leg that doesn't require planning or Japanese skills. Open very late." },
+      { slug:'boros-teamlab-osaka', name:"teamLab Botanical Garden Osaka", city:'osaka', type:'Sightseeing', desc:"Nighttime digital art installation in Osaka's Tsurumi Ryokuchi Park — illuminated flowers, projected light patterns through trees, and interactive light floors. A completely different experience to teamLab Borderless in Tokyo. Boros is going to appreciate the spectacle even if he can't explain why. Good group evening activity." },
+      { slug:'steve-toricafe-kyoto', name:"Tori no Ichi Sake Bar", city:'kyoto', type:'Nightlife', desc:"A standing sake bar in the Fushimi sake district — where Steve can finally try Japanese sake the way it should be experienced: poured fresh from local breweries, standing at a counter, no ceremony. The Fushimi area has multiple standing sake bars and sake vending machines. Something Steve will enjoy far more than he expects to." },
+      { slug:'steve-hoppy-street', name:"Hoppy Street", city:'tokyo', type:'Nightlife', desc:"A narrow alley in Asakusa lined with post-WWII standing bar stalls — plastic stools on the street, cheap Hoppy (a beer-like soft drink mixed with shochu), yakitori and motsu-yaki (offal skewers). Surviving from the 1940s black market era. The most purely Tokyo drinking experience that isn't Golden Gai. Steve will be comfortable here before the group even sits down." },
+      { slug:'kyoto-national-museum', name:"Kyoto National Museum", city:'kyoto', type:'Sightseeing', desc:"One of Japan's oldest national museums, holding a major collection of pre-modern Japanese and East Asian art — ceramics, textiles, calligraphy, sculpture, and archaeological pieces. A quieter, substantive counterpoint to the temple circuit, housed partly in a preserved Meiji-era building." },
+      { slug:'kawadoko-kamogawa', name:"Kawadoko Dining, Kamogawa Riverside", city:'kyoto', type:'Restaurants', desc:"Kawadoko is Kyoto's summer-into-early-autumn tradition of dining on wooden platforms built out over the Kamogawa River — though the platforms typically only run May through September, some restaurants along Pontocho and the riverside keep indoor river-view seating year-round. Worth checking current-season availability closer to the trip, but riverside dining here is a genuinely special Kyoto experience regardless of the exact format in January." },
+      { slug:'kichi-kichi-omurice', name:"Kichi Kichi Omurice", city:'kyoto', type:'Noodles & Comfort Food', desc:"A single-chef omurice counter famous online for its theatrical tableside presentation — the chef flips and shapes the rice omelet with real showmanship before slicing it open at the table. Small, intimate, and reservation-only; the whole experience is built around watching one dish get made." },
+      { slug:'ninuki-egg-shop', name:"Ninuki Egg Shop", city:'kyoto', type:'Noodles & Comfort Food', desc:"A specialty shop built entirely around eggs — tamagoyaki, egg sandwiches, and soft-boiled preparations using high-quality Kyoto eggs. A small, easy stop rather than a full meal." },
+      { slug:'hikiniku-to-come', name:"Hikiniku to Come", city:'kyoto', type:'Noodles & Comfort Food', desc:"A restaurant specializing in hand-minced meat cutlets (menchi katsu-style) — a juicier, looser texture than a standard tonkatsu since the meat is chopped rather than a single cut. A cult-favorite among Kyoto food regulars." },
+      { slug:'coffee-to-canale', name:"Coffee to Canale", city:'kyoto', type:'Cafes & Bakeries', desc:"A specialty coffee stop on Conner's Kyoto list. Confirm exact address and roast style closer to the trip." },
+      { slug:'matoi-gyoza', name:"Matoi Gyoza", city:'kyoto', type:'International & Casual', desc:"A gyoza-focused restaurant on Conner's Kyoto list. Confirm exact address closer to the trip." },
+      { slug:'chao-chao-gyoza', name:"Chao Chao Gyoza", city:'kyoto', type:'International & Casual', desc:"A popular Kyoto gyoza chain known for large, thin-skinned dumplings and a lively, casual izakaya atmosphere. Well known enough to have a regular queue on weekend evenings." },
+      { slug:'weekenders-coffee', name:"Weekenders Coffee", city:'kyoto', type:'Cafes & Bakeries', desc:"A tiny, stand-only specialty coffee stall tucked into a courtyard — no seating, just a window and a bench outside. Considered one of Kyoto's best pourover coffees by serious coffee people, run with an intense, minimalist focus on the beans." },
+      { slug:'tower-knives-osaka', name:"Tower Knives Osaka", city:'osaka', type:'Shopping', desc:"An English-friendly specialty knife shop near Tsutenkaku Tower in Shinsekai, carrying knives crafted in Sakai (Japan's historic bladesmithing region) and beyond. Staff walk through steel types, maintenance, and what suits a home cook vs. a professional, and offer a short sharpening lesson on request. Tax-free for international visitors with a passport." },
+      { slug:'yakiniku-rikimaru-dotonbori', name:"Yakiniku Rikimaru Dotonbori", city:'osaka', type:'Izakaya, Grills & Sushi', desc:"A yakiniku (Japanese grilled meat) restaurant in the heart of Dotonbori — table-side grilling, a range of wagyu cuts, and the usual banchan-style sides. Good group dinner option since everyone grills their own portions." },
+      { slug:'coco-curry-house', name:"CoCo Ichibanya Curry House", city:'osaka', type:'Noodles & Comfort Food', desc:"Japan's largest curry rice chain — fully customizable spice level (1–10), toppings menu (cutlet, cheese, veggies), and consistently good comfort food. Not fancy, but reliable and cheap, with an English-friendly picture menu at most locations." },
+      { slug:'takoyaki-dotonbori-kukuru', name:"Dotonbori Kukuru", city:'osaka', type:'Street Food & Markets', desc:"One of Dotonbori's most recognizable takoyaki chains, marked by a giant animated octopus sign outside. Crispy-outside, molten-inside takoyaki, made fresh to order. A classic Dotonbori street food stop — practically mandatory on a Dotonbori walk." },
+      { slug:'ajinoya-honten', name:"Ajinoya Honten", city:'osaka', type:'Street Food & Markets', desc:"A long-running, well-regarded okonomiyaki restaurant — savory grilled cabbage pancakes cooked tableside on a teppan, topped with okonomiyaki sauce, mayo, and bonito flakes. One of Osaka's signature dishes done properly." },
+      { slug:'kura-sushi-osaka', name:"Kura Sushi", city:'osaka', type:'Izakaya, Grills & Sushi', desc:"A reliable, affordable conveyor belt sushi chain with a fun gimmick — every 5 empty plates triggers a chance to win a small prize from a capsule machine at the table. Consistent quality, cheap (¥115/plate typically), and an easy, low-effort group meal." },
+      { slug:'super-sentai-restaurant', name:"Super Sentai Restaurant", city:'tokyo', type:'Restaurants', desc:"An official Super Sentai (Power Rangers) collaboration restaurant on the same floor as Kamen Rider The Diner in Ikebukuro. Menu items pull directly from past Sentai episodes — themed curries, character-color ice cream floats, gyoza and takoyaki styled around the show. Walls covered in memorabilia, figures, and replica costumes. ¥500 table charge includes an exclusive table mat and tin magnet." },
+      { slug:'hunters-bar-monster-hunter', name:"HUNTERS BAR — Monster Hunter Bar", city:'tokyo', type:'Izakaya, Grills & Sushi', desc:"The official Monster Hunter collaboration bar in Akihabara, run by Pasela Resorts. Full themed menu (\"Invitation to Dinner\" set, hunter-camp-style dishes and drinks), decor pulled from the game's world, and rotating seasonal menus/events tied to Monster Hunter releases. Private karaoke rooms also available on-site." },
+      { slug:'shinjuku-anime-shopping', name:"Shinjuku Anime & Tokusatsu Shopping", city:'tokyo', type:'Shopping', desc:"A free-roam shopping wander through Shinjuku's anime and tokusatsu shops — smaller and more scattered than Akihabara, but with its own strong lineup including Animate and other figure/merch stores near the station. Less overwhelming than Akihabara and easy to fold into the Day 3 Shinjuku itinerary alongside the escape room and evening bars." },
+      { slug:'asakusa-underground', name:"Asakusa Underground Street", city:'tokyo', type:'Shopping', desc:"Japan's oldest surviving underground shopping arcade, opened in 1955 beneath Asakusa Station — a roughly 50-meter corridor of exposed pipes, aging Showa-era signage, and small izakayas and shops that feel completely frozen in time. Most visitors walk right over it on the way to Sensoji without knowing it's there. A genuinely hidden, low-key detour that's the exact opposite of the crowds above ground." },
+      { slug:'pachinko-namba', name:"Pachinko Parlor, Namba", city:'osaka', type:'Activities', desc:"A genuine Japanese pachinko hall — wall-to-wall vertical pinball-slot machines, deafening chime music, cigarette haze, and rows of intensely focused regulars. Namba and Dotonbori are lined with some of the biggest, most neon-lit parlors in the country, easy to spot from the street. Not really about winning — more a five-senses experience that's hard to get anywhere outside Japan. A good, easy last-night-in-Japan stop after Izakaya Toyo winds down." },
+      { slug:'umeda-sky-building', name:"Umeda Sky Building", city:'osaka', type:'Sightseeing', desc:"Two 40-story towers connected at the top by a \"Floating Garden Observatory\" — a striking piece of 1990s architecture that's become an Osaka skyline icon. The open-air rooftop deck offers 360° views of the city, and on clear days reaches toward Osaka Bay and beyond. Escalators cross an open-air glass tube between the towers on the way up, which is an experience in itself. Especially good at sunset into evening for the city lights." },
+      { slug:'kurama-onsen', name:"Kurama Onsen", city:'kyoto', type:'Nature', desc:"A hot spring bathhouse at the base of the Kurama mountain trail, a short walk from Kurama Station. The outdoor rotenburo bath looks out over the forested hillside — a genuinely scenic soak, especially with any snow on the trees in January. The natural pairing for a Kurama-dera day: hike the temple grounds, then soak the legs out before heading back into central Kyoto." },
+      { slug:'pokemon-frienda-arcade', name:"Pokémon FRIENDA", city:'tokyo', type:'Activities', desc:"A Pokémon arcade cabinet released in July 2024 — touchscreen 3-on-3 battles where catching a Pokémon dispenses a real collectible \"Frienda Pick\" from the machine. Built on a twin/dual cabinet setup inherited from its predecessor Pokémon Mezastar, so two players can sit side by side and battle or catch simultaneously. Aimed at a younger crowd on paper, but the collectible-catching hook and genuine arcade cabinet design make it an easy, cheap detour for anyone who grew up on Pokémon." },
+      { slug:'ebisu-dagashi-bar', name:"Ebisu Dagashi Bar", city:'tokyo', type:'Nightlife', desc:"A bar built around dagashi — cheap, nostalgic Japanese penny candy and snacks from vending machines, convenience stores, and childhood memories. Walls stocked with retro candy alongside a full drink menu; order a cocktail and grab snacks off the shelf like a kid raiding a candy store. A genuinely fun, low-stakes group hang with built-in nostalgia and a strong photo/vlog angle." },
+      { slug:'kurama-dera', name:"Kurama-dera", city:'kyoto', type:'Temples & Shrines', desc:"A mountain temple in the forested hills north of Kyoto, founded in 770 and steeped in tengu (mountain goblin) folklore — some legends tie it to the young Minamoto no Yoshitsune training here. Reaching the main hall means a genuine hike up wooded switchback paths lined with cedar roots and stone lanterns, with the option to continue over the ridge down into Kibune on the other side. A cable car covers part of the ascent for those who want it. Quieter and far less crowded than Kyoto's central temple circuit." },
+      { slug:'tonkatsu-marushichi', name:"Tonkatsu Marushichi", city:'tokyo', type:'Noodles & Comfort Food', desc:"One of Jake's tonkatsu picks — breaded, deep-fried pork cutlet served with cabbage, rice, and miso soup. Confirm exact branch and neighborhood closer to the trip." },
+      { slug:'saccapau-tokyo', name:"S'accapau", city:'tokyo', type:'Restaurants', desc:"Jake's pick — confirm cuisine style and exact address closer to the trip." },
+      { slug:'ichigaku-tonkotsu', name:"Ichigaku Tonkotsu", city:'tokyo', type:'Noodles & Comfort Food', desc:"A tonkotsu ramen shop on Jake's list — rich pork-bone broth ramen. Confirm exact branch closer to the trip." },
+      { slug:'kaiten-sushi-onodera', name:"Kaiten Sushi Ginza Onodera", city:'tokyo', type:'Izakaya, Grills & Sushi', desc:"A high-end conveyor belt sushi concept from the Onodera group, bringing serious sushi-counter quality to the kaiten format. More refined and pricier than a typical conveyor belt spot, but with the same casual walk-in energy." },
+      { slug:'chiso-konya', name:"Chiso Konya", city:'tokyo', type:'Restaurants', desc:"Jake's pick — confirm cuisine style and exact address closer to the trip." },
+      { slug:'sougo-tokyo', name:"Sougo", city:'tokyo', type:'Restaurants', desc:"Jake's pick — confirm cuisine style and exact address closer to the trip." },
+      { slug:'pizza-studio-tamada', name:"Pizza Studio Tamada", city:'tokyo', type:'International & Casual', desc:"A well-regarded Neapolitan-style pizza spot in Tokyo. Jake's pick for a break from Japanese food." },
+      { slug:'pizza-strada', name:"Pizza Strada", city:'tokyo', type:'International & Casual', desc:"Another pizza spot on Jake's list. Confirm exact address and style closer to the trip." },
+      { slug:'immo-pippi', name:"Immo Pippi", city:'tokyo', type:'Restaurants', desc:"Jake's pick — confirm cuisine style and exact address closer to the trip." },
+      { slug:'yakitori-sei', name:"Yakitori Sei", city:'tokyo', type:'Izakaya, Grills & Sushi', desc:"Grilled skewer restaurant on Jake's list — chicken, vegetables, and seasonal cuts over charcoal. Confirm exact branch closer to the trip." },
+      { slug:'tokyo-curry-pan', name:"Tokyo Curry Pan", city:'tokyo', type:'Noodles & Comfort Food', desc:"Fried curry-stuffed bread — a Japanese bakery classic. A quick, cheap snack stop rather than a sit-down meal." },
+      { slug:'ny-bagel-club', name:"New York Bagel Club", city:'tokyo', type:'Cafes & Bakeries', desc:"A New York-style bagel shop in Tokyo — boiled-and-baked bagels with classic deli-style toppings. Good breakfast alternative to the usual convenience store run." },
+      { slug:'maen-sake', name:"Maen Sake", city:'tokyo', type:'Nightlife', desc:"A sake-focused bar on Jake's list. Confirm exact address and sake selection closer to the trip." },
+      { slug:'yuu-yoyogi-uehara', name:"Yuu Yoyogi Uehara", city:'tokyo', type:'Restaurants', desc:"A restaurant in the quiet, upscale Yoyogi-Uehara neighborhood — a residential area known for a cluster of good, low-key restaurants away from the tourist crowds." },
+      { slug:'new-toyosu-market', name:"New Toyosu Market", city:'tokyo', type:'Street Food & Markets', desc:"The modern successor to the old Tsukiji fish market's inner wholesale operations — the world's largest fish market by volume, relocated to Toyosu in 2018. Famous for the early-morning tuna auction (viewable from a viewing deck, advance booking needed) and a food court of sushi restaurants sourcing directly from the floor below." },
+      { slug:'daikanyama-neighborhood', name:"Daikanyama", city:'tokyo', type:'Shopping', desc:"A quiet, upscale neighborhood known for boutique fashion, design shops, and the Tsutaya Books flagship — a beautifully designed bookstore/lifestyle complex. Slower-paced and more residential than Shibuya proper, a short walk away." },
+      { slug:'kfc-gojo-shinjuku', name:"KFC Shinjuku Nishiguchi", city:'tokyo', type:'International & Casual', desc:"The KFC location that became a meme/TikTok pilgrimage spot for the \"Are you the strongest because you're Gojo Satoru\" scene. A goofy, low-stakes photo-op stop rather than a real food destination — but exactly the kind of detour that makes for good vlog content." },
+      { slug:'hekkelun-tokyo', name:"Hekkelun", city:'tokyo', type:'Cafes & Bakeries', desc:"A Scandinavian-style bakery known for cinnamon rolls and Danish pastries — a popular Tokyo bakery spot with a devoted following. Good breakfast or midday sweet stop." },
+      { slug:'coffee-shop-pinocchio', name:"Coffee Shop Pinocchio", city:'tokyo', type:'Cafes & Bakeries', desc:"A retro kissaten-style coffee shop on Jake's list. Confirm exact address and neighborhood closer to the trip." },
+      { slug:'ny-pizza-tonys', name:"New York Pizza Tony's", city:'tokyo', type:'International & Casual', desc:"A New York-style pizza spot on Jake's list — large foldable slices, classic toppings. Confirm exact address closer to the trip." },
+      { slug:'yamacho-kuro-udon', name:"Yamacho Kuro Udon", city:'tokyo', type:'Noodles & Comfort Food', desc:"A Harajuku udon spot known for \"kuro\" (black) udon — a striking squid-ink or charcoal-colored noodle variation. Distinctive photo-friendly dish and a solid, quick lunch stop in the middle of a Harajuku shopping day." },
+      { slug:'tensuke-tokyo', name:"Tensuke", city:'tokyo', type:'Noodles & Comfort Food', desc:"A tempura restaurant on Jake's list. Confirm exact address and counter/table format closer to the trip." },
+      { slug:'bar-centifolia', name:"Bar Centifolia", city:'tokyo', type:'Nightlife', desc:"An ornate, heavily-styled cocktail bar that circulates often on TikTok and Instagram for its elaborate interior and presentation. More of a visual/photo experience than a casual hang — good for a dressed-up night out." },
+      { slug:'sake-bar-hotel-asakusa', name:"Sake Bar Hotel Asakusa", city:'tokyo', type:'Nightlife', desc:"A sake-focused bar in Asakusa, part of a small hotel concept built around Japanese sake culture. A good, low-key stop for sampling regional sake without needing to trek out to a specific brewing district." },
+      { slug:'pokepark-kanto', name:"PokéPark Kanto", city:'tokyo', type:'Activities', desc:"A Pokémon-themed attraction/park experience in the Kanto region. Confirm exact venue and current opening status closer to the trip, as Pokémon-branded pop-up and permanent attractions rotate." },
+      { slug:'one-piece-base-shop', name:"One Piece Base Shop", city:'tokyo', type:'Shopping', desc:"Official One Piece merchandise store — figures, apparel, and exclusive collaborative items tied to the anime/manga. A strong pairing with Silva's anime-focused shopping if schedules line up." },
+      { slug:'jins-shinjuku-flagship', name:"JINS Shinjuku Flagship", city:'tokyo', type:'Shopping', desc:"JINS' flagship eyewear store in Shinjuku — includes an on-site eye exam and a large selection of well-designed, affordable frames. A practical stop if anyone wants new glasses at Japan pricing, and the flagship location itself is a well-designed retail space worth seeing." },
+      { slug:'rocky-top-bluegrass', name:"Rocky Top", city:'tokyo', type:'Nightlife', desc:"A bluegrass live-music venue in Tokyo — an unexpectedly deep bluegrass and Americana scene exists in the city, and this is one of its known spots. A genuinely surprising night out for a Tokyo trip." },
+      { slug:'itoya-ginza', name:"Itoya", city:'tokyo', type:'Shopping', desc:"A 12-floor stationery and paper-goods department store in Ginza — pens, notebooks, art supplies, and beautifully designed everyday objects across every floor. A genuinely absorbing browse even for people who don't think of themselves as \"stationery people.\"" },
+      { slug:'hozenji-yokocho', name:"Hozenji Yokocho", city:'osaka', type:'Nightlife', desc:"A narrow, moss-and-stone-lantern-lined alley next to Hozenji Temple in Namba — small traditional restaurants and bars packed into a single atmospheric lane, similar in spirit to Pontocho in Kyoto but distinctly Osaka. Quieter and more intimate than the nearby Dotonbori strip." },
+      { slug:'ghibli-park-nagoya', name:"Ghibli Park", city:'other', type:'Day Trips', desc:"A full-scale theme park built around Studio Ghibli's world, opened in 2022 inside Aichi's Expo 2005 Commemorative Park near Nagoya — distinct from (and much larger than) the Ghibli Museum in Mitaka, Tokyo. Split into themed areas including Ghibli's Grand Warehouse, Dondoko Forest (My Neighbor Totoro), Hill of Youth, and Mononoke Village, with full-size reconstructed sets and buildings from the films rather than just displays. On Silva's someday list." },
+      { slug:'narutomaki-fujiq-room', name:"Naruto-Themed Room (Fuji-Q Highland)", city:'other', type:'Day Trips', desc:"A Naruto-themed hotel room tied to Fuji-Q Highland, the large amusement park near Mt. Fuji known for extreme roller coasters. On Jake's someday list." },
+      { slug:'naruto-theme-park-awaji', name:"Naruto Theme Park", city:'other', type:'Day Trips', desc:"A Naruto-themed park on Awaji Island. On Jake's someday list." },
+      { slug:'shinpachi-shokudo', name:"Shinpachi Shokudo", city:'tokyo', type:'Cafes & Bakeries', desc:"A no-frills Japanese breakfast chain serving the classic teishoku set — grilled fish, rice, miso soup, pickles, raw egg — exactly the way it's eaten across Japan every morning. Cheap, fast, and an honest contrast to the themed cafes elsewhere on the list. A good reset meal between the heavier food days." },
+      { slug:'butagumi-tokyo', name:"Butagumi", city:'tokyo', type:'Noodles & Comfort Food', desc:"A well-regarded tonkatsu specialist in Nishi-Azabu, set in a converted traditional house. Sources a wide range of pork breeds from across Japan, each with a noticeably different flavor and fat profile, served as classic breaded pork cutlet with cabbage and miso soup. More refined than a typical tonkatsu counter — worth the trip for a serious pork-cutlet meal." },
+      { slug:'komeda-coffee-tokyo', name:"Komeda's Coffee", city:'tokyo', type:'Cafes & Bakeries', desc:"A nationwide kissaten-style coffee chain known for the morning \"Morning Set\" — order any coffee before 11am and get a thick slice of toast with butter and red bean paste or egg, free. Retro, wood-paneled interiors with deep booth seating. A reliable, relaxed breakfast option that doesn't require research or a reservation." },
+      { slug:'rakuu-tei-teahouse', name:"Rakuu-tei", city:'tokyo', type:'Cafes & Bakeries', desc:"A traditional tea house inside Shinjuku Gyoen, serving matcha and wagashi sweets overlooking a Japanese garden pond. A genuinely calm, unhurried stop in the middle of a park visit — proper tea ceremony presentation without needing to book a formal ceremony experience." },
+      { slug:'los-tacos-azules', name:"Los Tacos Azules", city:'tokyo', type:'International & Casual', desc:"A taqueria serving proper Mexican-style street tacos in Tokyo — blue corn tortillas, slow-cooked meats, fresh salsas. Part of the small but growing wave of genuinely good Mexican food in the city. A solid change of pace from a heavy stretch of Japanese food days." },
+      { slug:'shinjuku-gyoen', name:"Shinjuku Gyoen National Garden", city:'tokyo', type:'Nature', desc:"One of Tokyo's largest and most beautiful parks, blending traditional Japanese, French formal, and English landscape garden styles across 144 acres. A genuinely peaceful break from the city — koi ponds, a greenhouse, and Rakuu-tei tea house inside the grounds. Even in January, the garden's structure and the greenhouse make it worth the visit." },
+      { slug:'round1-tokyo', name:"Round 1 Tokyo", city:'tokyo', type:'Activities', desc:"The Tokyo branch of Japan's premier bowling and arcade entertainment chain — bowling, billiards, karaoke, darts, batting cages, and a large arcade floor under one roof. Same chain as the Osaka location already planned for later in the trip, but worth doing in Tokyo too since locations and machine selections differ by branch." },
+      { slug:'sumo-wrestling-tokyo', name:"Sumo Wrestling", city:'tokyo', type:'Activities', desc:"The Grand Sumo Tournament runs Jan 9–23, 2027 at Ryogoku Kokugikan, directly overlapping the Tokyo leg of the trip. A full day of bouts builds toward the higher-ranked wrestlers in the late afternoon — genuinely one of the most unique live sporting experiences in Japan, win-or-lose theater built into centuries of ritual." },
+      { slug:'mount-takao', name:"Mount Takao", city:'tokyo', type:'Day Trips', desc:"A 599m mountain less than an hour from central Tokyo by train, popular for an easy day hike with multiple trail options ranging from a paved path to a more rugged route. A cable car and chairlift offer a no-effort version partway up. On a clear January day, the summit has views toward Mount Fuji. Includes a small temple complex (Yakuoin) partway up the mountain." },
+      { slug:'disneysea-port-drinking', name:"Tokyo DisneySea — A Drink at Every Port", city:'tokyo', type:'Day Trips', desc:"Tokyo DisneySea is the only Disney park in the world that serves alcohol, and the bit is simple: one themed drink at each of the park's 8 ports — Mediterranean Harbor, American Waterfront, Port Discovery, Lost River Delta, Arabian Coast, Mermaid Lagoon, Mysterious Island, and Fantasy Springs. Seasonal cocktails rotate constantly and the lounges (Teddy Roosevelt Lounge, Barnacle Bill's) are built for exactly this. The park itself is widely considered Tokyo Disney Resort's best — immersive theming, Tower of Terror, Journey to the Center of the Earth, Indiana Jones Adventure, Soaring: Fantastic Flight." },
+      { slug:'square-enix-garden-shibuya', name:"Square Enix Garden", city:'tokyo', type:'Shopping', desc:"Square Enix's newest flagship goods store, opened in 2025 inside Shibuya Sakura Stage — replacing the older Shinjuku showcase as the main Tokyo destination for official merchandise. Entrance built around Chocobos, Moogles, and Slimes; sections themed to Final Fantasy and Dragon Quest with figures, apparel, jewelry, and collaborative items. Strong NieR: Automata figure selection alongside the usual FF/DQ lineup. Exclusive store-only items including a capsule toy machine." },
+      { slug:'drunken-clam-osaka', name:"The Drunken Clam", city:'osaka', type:'Nightlife', desc:"A Family Guy-themed karaoke bar tucked on the third floor of an unmarked building near Dotonbori — easy to walk past without noticing. English-friendly staff, a strong karaoke song list including anime tracks with romaji mode, and a mixed crowd of locals and international travelers. Compact and intimate rather than a big chain karaoke box. Open late — until 4am Fri/Sat." },
+      { slug:'toei-animation-gallery', name:"Toei Animation Gallery", city:'tokyo', type:'Sightseeing', desc:"A small, free museum at Toei Animation's actual production studio in Nerima — the company behind One Piece, Dragon Ball, Sailor Moon, and Digimon. Original cels, character model sheets, and production materials on display, plus a gift shop with merchandise not sold elsewhere. Modest in size but a genuine look at the studio actually making the shows Silva grew up on, rather than a tourist-facing attraction." },
+      { slug:'toei-studios-kyoto', name:"Toei Studios Kyoto", city:'kyoto', type:'Day Trips', desc:"A real working film studio turned theme park, built around the sets used for samurai and period dramas (jidaigeki) since the 1970s. Recreated Edo-period streets, a ninja experience zone, live samurai sword-fighting shows, and a museum covering Japanese film and tokusatsu (live-action superhero/monster) history — including Kamen Rider and other tokusatsu props Silva will recognize. Staff in costume wander the sets and you can rent samurai or ninja outfits for photos." },
+      { slug:'round1-osaka', name:"Round 1 Osaka", city:'osaka', type:'Activities', desc:"Japan's premier bowling and arcade entertainment chain, and the Osaka Namba location is one of the best in the country. Multiple floors of bowling, billiards, karaoke, table tennis, batting cages, darts, and a massive arcade floor. The big draw: Round 1 is open 24 hours on weekends and until the early hours on weekdays — it becomes a late-night institution after the bars, with a completely different crowd at 2am than at 2pm. Great group activity that works for every interest level." },
+    ];
+  let currentFilter = 'All';
+  let expandedSlug = null;
+  let hideVoted = false;
+  let quickMode = false;
+  let shuffleMode = false;
+  let view = 'hub'; // 'hub' | 'browse'
+  const quickHistory = []; // { slug, prev } stack for undo in quick sort mode
+
+  const typeCode = {
+    'Temples & Shrines':'TMP',
+    'Sightseeing':'SGT',
+    'Activities':'ACT',
+    'Cafes & Bakeries':'CAF',
+    'Noodles & Comfort Food':'NDL',
+    'Restaurants':'RST',
+    'Street Food & Markets':'MKT',
+    'Izakaya, Grills & Sushi':'IZK',
+    'International & Casual':'INT',
+    'Nightlife':'NGT',
+    'Shopping':'SHP',
+    'Nature':'NAT',
+    'Day Trips':'DAY'
+  };
+  const categoryOrder = Object.keys(typeCode);
+  function categoryCode(type){ return typeCode[type] || type.slice(0,3).toUpperCase(); }
+
+  let currentVoter = null;
+  const votes = {}; // slug -> 'yes' | 'indifferent' | 'no'  (unset until voter picks)
+
+  // ---- Auto-save progress to localStorage ----
+  // Note: localStorage is unavailable inside Claude.ai's sandboxed artifact preview
+  // (that sandbox blocks all browser storage). This works normally once the file is
+  // opened directly (e.g. via Safari/file://) or hosted for real on GitHub Pages —
+  // saveProgress/loadProgress fail silently rather than erroring if storage is blocked.
+  const STORAGE_PREFIX = 'japan-vote-demo:';
+
+  function saveProgress(){
+    if (!currentVoter) return;
+    try {
+      localStorage.setItem(STORAGE_PREFIX + currentVoter, JSON.stringify(votes));
+    } catch (e) { /* storage unavailable — continue silently, in-memory state still works */ }
+  }
+
+  function loadProgress(voterId){
+    try {
+      const raw = localStorage.getItem(STORAGE_PREFIX + voterId);
+      if (!raw) return false;
+      const saved = JSON.parse(raw);
+      Object.keys(votes).forEach(k => delete votes[k]);
+      Object.assign(votes, saved);
+      return Object.keys(saved).length > 0;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function firstUnfinishedCategory(){
+    for (const type of categoryOrder){
+      const items = activities.filter(a => a.type === type);
+      if (!items.every(a => votes[a.slug])) return type;
+    }
+    return categoryOrder[categoryOrder.length - 1];
+  }
+
+  const voterGate = document.getElementById('voterGate');
+  const gateGrid = document.getElementById('gateGrid');
+  const gateConfirmBtn = document.getElementById('gateConfirmBtn');
+  const hubSection = document.getElementById('hubSection');
+  const browseSection = document.getElementById('browseSection');
+  const backToHubBtn = document.getElementById('backToHubBtn');
+  const ticketList = document.getElementById('ticketList');
+  const progressFill = document.getElementById('progressFill');
+  const progressLabel = document.getElementById('progressLabel');
+  const voterLabel = document.getElementById('voterLabel');
+  const exportBtn = document.getElementById('exportBtn');
+  const exportStatus = document.getElementById('exportStatus');
+  const hideVotedInput = document.getElementById('hideVotedInput');
+  const quickModeInput = document.getElementById('quickModeInput');
+  const shuffleInput = document.getElementById('shuffleInput');
+  const quickCard = document.getElementById('quickCard');
+
+  let gateSelection = null;
+
+  function renderGate(){
+    gateGrid.innerHTML = '';
+    crew.forEach(p => {
+      const btn = document.createElement('button');
+      btn.className = 'gate-name-btn' + (gateSelection === p.id ? ' selected' : '');
+      btn.style.setProperty('--chip-color', p.color);
+      btn.textContent = p.name;
+      btn.onclick = () => {
+        gateSelection = p.id;
+        gateConfirmBtn.disabled = false;
+        renderGate();
+      };
+      gateGrid.appendChild(btn);
+    });
+  }
+
+  gateConfirmBtn.onclick = () => {
+    if (!gateSelection) return;
+    const p = crew.find(c => c.id === gateSelection);
+    selectVoter(p);
+    voterGate.style.display = 'none';
+    document.body.style.overflow = '';
+  };
+
+  function selectVoter(p){
+    currentVoter = p.id;
+    document.documentElement.style.setProperty('--voter', p.color);
+    voterLabel.textContent = p.name;
+    const resumed = loadProgress(p.id);
+    exportStatus.textContent = p.name + (resumed ? ' — resuming your progress' : ' — sorting by category');
+    exportBtn.disabled = false;
+    enterCategory(firstUnfinishedCategory());
+  }
+
+  function renderHub(){
+    view = 'hub';
+    hubSection.style.display = '';
+    browseSection.style.display = 'none';
+
+    const totalVoted = activities.filter(a => votes[a.slug]).length;
+    const categoryCards = categoryOrder.map(type => {
+      const items = activities.filter(a => a.type === type);
+      const voted = items.filter(a => votes[a.slug]).length;
+      return `
+        <button class="hub-card" data-type="${type}">
+          <div class="hub-card-code">${categoryCode(type)}</div>
+          <div class="hub-card-name">${type}</div>
+          <div class="hub-card-count">${voted} / ${items.length} voted</div>
+        </button>`;
+    }).join('');
+
+    hubSection.innerHTML = `
+      <div class="hub-intro">
+        <div class="hub-overall">${totalVoted} / ${activities.length} voted overall</div>
+        <p class="hub-sub">Pick a category to compare like with like — go through all the temples together, then all the restaurants, and so on.</p>
+      </div>
+      <div class="hub-grid">
+        ${categoryCards}
+        <button class="hub-card hub-card-all" data-type="All">
+          <div class="hub-card-code">ALL</div>
+          <div class="hub-card-name">Everything</div>
+          <div class="hub-card-count">${totalVoted} / ${activities.length} voted</div>
+        </button>
+      </div>
+    `;
+
+    hubSection.querySelectorAll('.hub-card').forEach(btn => {
+      btn.onclick = () => enterCategory(btn.dataset.type);
+    });
+  }
+
+  function enterCategory(type){
+    currentFilter = type;
+    quickMode = true;
+    quickModeInput.checked = true;
+    view = 'browse';
+    hubSection.style.display = 'none';
+    browseSection.style.display = '';
+    renderTickets();
+  }
+
+  backToHubBtn.onclick = () => renderHub();
+
+  function renderTickets(){
+    if (quickMode){
+      ticketList.innerHTML = '';
+      ticketList.style.display = 'none';
+      quickCard.style.display = '';
+      renderQuickCard();
+      updateProgress();
+      return;
+    }
+    ticketList.style.display = '';
+    quickCard.style.display = 'none';
+    quickCard.innerHTML = '';
+
+    ticketList.innerHTML = '';
+
+    const visible = activities.filter(a => {
+      const matchesFilter = currentFilter === 'All' || a.type === currentFilter;
+      const matchesHide = !hideVoted || !votes[a.slug];
+      return matchesFilter && matchesHide;
+    });
+
+    visible.forEach(act => {
+      const card = document.createElement('div');
+      card.className = 'ticket' + (expandedSlug === act.slug ? ' expanded' : '');
+      card.innerHTML = `
+        <div class="ticket-stub">
+          <div class="stub-code">${cityCode[act.city]}</div>
+          <div class="stub-city">${act.city}</div>
+        </div>
+        <div class="ticket-body">
+          <div class="ticket-head" data-toggle="${act.slug}">
+            <div>
+              <div class="ticket-name">${act.name}</div>
+              <div class="ticket-tag">${act.type}</div>
+            </div>
+            <span class="ticket-chevron">▾</span>
+          </div>
+          <div class="ticket-desc"><div class="ticket-desc-inner">${act.desc}</div></div>
+          <div class="vote-row">
+            <button class="vote-btn" data-val="yes" data-slug="${act.slug}"><span class="mark">●</span>Yes<span class="stamp-pop"></span></button>
+            <button class="vote-btn" data-val="indifferent" data-slug="${act.slug}"><span class="mark">〜</span>Meh<span class="stamp-pop"></span></button>
+            <button class="vote-btn" data-val="no" data-slug="${act.slug}"><span class="mark">✕</span>No<span class="stamp-pop"></span></button>
+          </div>
+        </div>
+      `;
+      ticketList.appendChild(card);
+    });
+
+    // wire expand/collapse
+    document.querySelectorAll('.ticket-head').forEach(head => {
+      head.onclick = () => {
+        const slug = head.dataset.toggle;
+        expandedSlug = expandedSlug === slug ? null : slug;
+        renderTickets();
+      };
+    });
+
+    // wire vote buttons + reflect state
+    document.querySelectorAll('.vote-btn').forEach(btn => {
+      const slug = btn.dataset.slug;
+      const val = btn.dataset.val;
+      if (votes[slug] === val) btn.classList.add('active');
+      btn.onclick = () => castVote(slug, val, btn);
+    });
+
+    updateProgress();
+  }
+
+  function castVote(slug, val, btn){
+    if (!currentVoter) return;
+    votes[slug] = val;
+    saveProgress();
+
+    // update sibling buttons in this ticket
+    const row = btn.parentElement;
+    row.querySelectorAll('.vote-btn').forEach(b => b.classList.remove('active', 'just-stamped'));
+    btn.classList.add('active', 'just-stamped');
+    requestAnimationFrame(() => {
+      setTimeout(() => btn.classList.remove('just-stamped'), 350);
+    });
+
+    updateProgress();
+
+    if (hideVoted){
+      const card = btn.closest('.ticket');
+      if (card){
+        setTimeout(() => {
+          card.classList.add('leaving');
+          setTimeout(() => renderTickets(), 350);
+        }, 300);
+      }
+    }
+  }
+
+  function updateProgress(){
+    const voted = activities.filter(a => votes[a.slug]).length;
+    progressLabel.textContent = `${voted} / ${activities.length} stamped`;
+    progressFill.style.width = (voted / activities.length * 100) + '%';
+  }
+
+  exportBtn.onclick = () => {
+    if (!currentVoter) return;
+    const payload = {
+      voter: currentVoter,
+      exportedAt: new Date().toISOString(),
+      votes: {}
+    };
+    activities.forEach(a => {
+      payload.votes[a.slug] = votes[a.slug] || 'indifferent';
+    });
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `votes-${currentVoter}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const badgeByType = {
+    'Temples & Shrines': 'The Pilgrim',
+    'Sightseeing': 'The Sightseer',
+    'Activities': 'The Player',
+    'Cafes & Bakeries': 'The Cafe Hopper',
+    'Noodles & Comfort Food': 'The Noodle Hunter',
+    'Restaurants': 'The Foodie',
+    'Street Food & Markets': 'The Grazer',
+    'Izakaya, Grills & Sushi': 'The Izakaya Regular',
+    'International & Casual': 'The Easy Eater',
+    'Nightlife': 'The Night Owl',
+    'Shopping': 'The Shopper',
+    'Nature': 'The Wanderer',
+    'Day Trips': 'The Explorer'
+  };
+
+  function computeFinalStats(){
+    const tally = { yes: 0, indifferent: 0, no: 0 };
+    const cityYes = {};
+    const typeYes = {};
+
+    activities.forEach(a => {
+      const v = votes[a.slug] || 'indifferent';
+      tally[v]++;
+      if (v === 'yes'){
+        cityYes[a.city] = (cityYes[a.city] || 0) + 1;
+        typeYes[a.type] = (typeYes[a.type] || 0) + 1;
+      }
+    });
+
+    let topType = null, topTypeCount = 0;
+    Object.entries(typeYes).forEach(([t, c]) => { if (c > topTypeCount){ topType = t; topTypeCount = c; } });
+
+    let topCity = null, topCityCount = 0;
+    Object.entries(cityYes).forEach(([c, n]) => { if (n > topCityCount){ topCity = c; topCityCount = n; } });
+
+    const yesPct = Math.round((tally.yes / activities.length) * 100);
+    const badge = topType ? (badgeByType[topType] || 'The Traveler') : 'The Undecided';
+
+    return {
+      tally, yesPct, topType, topTypeCount,
+      topCity: topCity ? topCity.charAt(0).toUpperCase() + topCity.slice(1) : null,
+      badge
+    };
+  }
+
+  function shuffleArray(arr){
+    const copy = arr.slice();
+    for (let i = copy.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  }
+
+  function renderQuickCard(){
+    let pool = activities.filter(a =>
+      (currentFilter === 'All' || a.type === currentFilter) && !votes[a.slug]
+    );
+    if (shuffleMode) pool = shuffleArray(pool);
+
+    if (pool.length === 0){
+      const allDone = activities.every(a => votes[a.slug]);
+
+      if (allDone){
+        const stats = computeFinalStats();
+        const typeLine = stats.topType
+          ? `<div class="quick-next">Top category: <strong>${stats.topType}</strong> (${stats.topTypeCount} yes)</div>`
+          : '';
+        const cityLine = stats.topCity
+          ? `<div class="quick-next">Favorite city: <strong>${stats.topCity}</strong></div>`
+          : '';
+
+        quickCard.innerHTML = `
+          <div class="quick-card">
+            <div class="quick-empty">All activities voted — nice work!</div>
+            <div class="quick-badge">You're ${stats.badge}</div>
+            <div class="quick-tally">
+              <span class="tally-yes">${stats.tally.yes} yes</span> ·
+              <span class="tally-indifferent">${stats.tally.indifferent} indifferent</span> ·
+              <span class="tally-no">${stats.tally.no} no</span>
+            </div>
+            <div class="quick-stat-line">Said yes to ${stats.yesPct}% of everything</div>
+            ${typeLine}
+            ${cityLine}
+            <div class="quick-next">Hit Export My Votes below to send in your picks.</div>
+            <button class="quick-undo" id="quickUndoBtn" ${quickHistory.length === 0 ? 'disabled' : ''}>↶ Undo last vote</button>
+          </div>`;
+        wireQuickUndo();
+        return;
+      }
+
+      const scope = activities.filter(a => currentFilter === 'All' || a.type === currentFilter);
+      const tally = { yes: 0, indifferent: 0, no: 0 };
+      scope.forEach(a => { const v = votes[a.slug]; if (v) tally[v]++; });
+
+      const catIdx = categoryOrder.indexOf(currentFilter);
+      let nextType = (catIdx !== -1 && catIdx < categoryOrder.length - 1) ? categoryOrder[catIdx + 1] : null;
+      // skip any categories that are already fully voted, so Continue always lands on real unfinished work
+      while (nextType && activities.filter(a => a.type === nextType).every(a => votes[a.slug])){
+        const idx = categoryOrder.indexOf(nextType);
+        nextType = idx < categoryOrder.length - 1 ? categoryOrder[idx + 1] : null;
+      }
+
+      const tallyHtml = `
+        <div class="quick-tally">
+          <span class="tally-yes">${tally.yes} yes</span> ·
+          <span class="tally-indifferent">${tally.indifferent} indifferent</span> ·
+          <span class="tally-no">${tally.no} no</span>
+        </div>`;
+
+      quickCard.innerHTML = `
+        <div class="quick-card">
+          <div class="quick-empty">Done with ${currentFilter}!</div>
+          ${tallyHtml}
+          <div class="quick-next">Next up: <strong>${nextType}</strong></div>
+          <div class="quick-bulk-row">
+            <button class="quick-continue-btn" id="quickContinueBtn">Continue to ${nextType} →</button>
+          </div>
+          <button class="quick-undo" id="quickUndoBtn" ${quickHistory.length === 0 ? 'disabled' : ''}>↶ Undo last vote</button>
+        </div>`;
+      const continueBtn = document.getElementById('quickContinueBtn');
+      if (continueBtn) continueBtn.onclick = () => enterCategory(nextType);
+      wireQuickUndo();
+      return;
+    }
+
+    const act = pool[0];
+    const remaining = pool.length;
+
+    quickCard.innerHTML = `
+      <div class="quick-card">
+        <div class="quick-progress">${remaining} left in this filter</div>
+        <div class="quick-eyebrow">${cityCode[act.city]} · ${act.city}</div>
+        <div class="quick-name">${act.name}</div>
+        <div class="quick-tag">${act.type}</div>
+        <div class="quick-desc">${act.desc}</div>
+        <div class="quick-vote-row">
+          <button class="quick-vote-btn" data-val="yes"><span class="mark">●</span>Yes</button>
+          <button class="quick-vote-btn" data-val="indifferent"><span class="mark">〜</span>Meh</button>
+          <button class="quick-vote-btn" data-val="no"><span class="mark">✕</span>No</button>
+        </div>
+        <div class="quick-bulk-row">
+          <button class="quick-bulk-btn" id="quickBulkBtn">Mark remaining ${remaining} indifferent</button>
+        </div>
+        <button class="quick-undo" id="quickUndoBtn" ${quickHistory.length === 0 ? 'disabled' : ''}>↶ Undo last vote</button>
+      </div>
+    `;
+
+    quickCard.querySelectorAll('.quick-vote-btn').forEach(btn => {
+      btn.onclick = () => castQuickVote(act.slug, btn.dataset.val);
+    });
+    wireQuickUndo();
+    const bulkBtn = document.getElementById('quickBulkBtn');
+    if (bulkBtn) bulkBtn.onclick = markRestIndifferent;
+  }
+
+  function markRestIndifferent(){
+    if (!currentVoter) return;
+    const pool = activities.filter(a =>
+      (currentFilter === 'All' || a.type === currentFilter) && !votes[a.slug]
+    );
+    if (pool.length === 0) return;
+    quickHistory.push({ bulk: pool.map(a => ({ slug: a.slug, prev: votes[a.slug] })) });
+    pool.forEach(a => { votes[a.slug] = 'indifferent'; });
+    saveProgress();
+    updateProgress();
+    renderQuickCard();
+  }
+
+  function wireQuickUndo(){
+    const btn = document.getElementById('quickUndoBtn');
+    if (btn) btn.onclick = undoLastQuickVote;
+  }
+
+  function undoLastQuickVote(){
+    if (quickHistory.length === 0) return;
+    const entry = quickHistory.pop();
+    if (entry.bulk){
+      entry.bulk.forEach(({ slug, prev }) => {
+        if (prev === undefined) delete votes[slug]; else votes[slug] = prev;
+      });
+    } else {
+      const { slug, prev } = entry;
+      if (prev === undefined) delete votes[slug]; else votes[slug] = prev;
+    }
+    saveProgress();
+    updateProgress();
+    renderQuickCard();
+  }
+
+  function castQuickVote(slug, val){
+    if (!currentVoter) return;
+    quickHistory.push({ slug, prev: votes[slug] });
+    votes[slug] = val;
+    saveProgress();
+    updateProgress();
+
+    const card = quickCard.querySelector('.quick-card');
+    if (card){
+      card.classList.add('leaving');
+      setTimeout(() => renderQuickCard(), 260);
+    } else {
+      renderQuickCard();
+    }
+  }
+
+  quickModeInput.onchange = () => {
+    quickMode = quickModeInput.checked;
+    renderTickets();
+  };
+
+  shuffleInput.onchange = () => {
+    shuffleMode = shuffleInput.checked;
+    if (quickMode) renderQuickCard();
+  };
+
+  hideVotedInput.onchange = () => {
+    hideVoted = hideVotedInput.checked;
+    renderTickets();
+  };
+
+  document.body.style.overflow = 'hidden';
+  renderGate();
+  renderHub();
+</script>
+
+</body>
+</html>
